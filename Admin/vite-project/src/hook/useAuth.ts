@@ -10,13 +10,28 @@ export interface LoginPayload {
   password: string;
 }
 
+export interface IUser {
+  _id: string;
+  email: string;
+  phone: string;
+  userPanel: string;
+  adminPanel: string;
+  role: "admin" | "user" | string;
+  createdAt: string;   // ISO Date string
+  updatedAt: string;   // ISO Date string
+  loginAt: string;     // ISO Date string
+  __v: number;
+}
+
+// Results object
+export interface ILoginResults {
+  data: IUser;
+  accessToken: string;
+}
 export interface LoginResponse {
-  token: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-  };
+  success: boolean;
+  message: string;
+  results: ILoginResults;
 }
 
 export const loginUser = async (
@@ -36,9 +51,5 @@ export const loginUser = async (
 export const useLogin = () => {
   return useMutation<LoginResponse, Error, LoginPayload>({
     mutationFn: loginUser,
-    onSuccess: (data) => {
-      // Save token in localStorage (if needed)
-      localStorage.setItem("token", data.token);
-    },
   });
 };
