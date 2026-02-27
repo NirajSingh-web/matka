@@ -8,8 +8,8 @@ export interface IAdmin extends Document {
   email: string;
   phone: string;
   password: string;
-  userPanel: boolean;
-  adminPanel: boolean;
+  userPanel: string;
+  adminPanel: string;
   role: AdminRole;
   loginAt?: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -36,12 +36,12 @@ const AdminSchema = new Schema<IAdmin>(
       select: false, // prevent returning password by default
     },
     userPanel: {
-      type: Boolean,
-      default: false,
+      type: String,
+      required:true
     },
     adminPanel: {
-      type: Boolean,
-      default: true,
+      type: String,
+      required:true
     },
     role: {
       type: String,

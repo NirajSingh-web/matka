@@ -3,7 +3,7 @@ import axios from "axios";
 import { getToken, removeToken } from "../utils/getTocken";
 export const apiServer = axios.create({
   baseURL: "http://localhost:3000/admin",
-  withCredentials: true,
+  // withCredentials: true,
 });
 const logout = async () => {
   try {
@@ -11,9 +11,9 @@ const logout = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    removeToken()
-    delete apiServer.defaults.headers.common["Authorization"];
-    window.location.href = "/login";
+    // removeToken()
+    // delete apiServer.defaults.headers.common["Authorization"];
+    // window.location.href = "/login";
   }
 };
 const capMarketServerHeaders = (config: any) => {

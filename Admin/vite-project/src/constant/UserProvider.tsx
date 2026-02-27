@@ -5,11 +5,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { removeToken } from "../utils/getTocken";
+import { removeToken, setToken } from "../utils/getTocken";
 import { useAdminDetails } from "../hook/useAdminDetails";
 import { apiServer } from "./apiclient";
+import type { ILoginResults, IUser } from "../hook/useAuth";
 interface UserContextType {
-  user: any | null;
+  user:  IUser| null;
   isAuthenticated: boolean;
   login: (data: any) => boolean;
   logout: () => Promise<void>;
@@ -24,12 +25,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       setUser(data.data);
     }
   }, [data]);
-
-  const login = (data: any): boolean => {
-    const token = data?.data?.token;
+  const login = (data: ILoginResults): boolean => {
+    const token = data?.accessToken;
     setUser(data.data);
     if (token) {
-      localStorage.setItem("accessToken", token);
+      setToken(token);
       apiServer.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${token}`;;
@@ -64,7 +64,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     </UserContext.Provider>
   );
 };
-
 export const
   useUser = (): UserContextType => {
     const context = useContext(UserContext);

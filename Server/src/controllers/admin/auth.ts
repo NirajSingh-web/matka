@@ -110,3 +110,14 @@ export const getAdminDetails = async (req: AuthRequest, res: Response) => {
         });
     }
 };
+// export const createAdminService = async (
+// ) => {
+
+//     const newAdmin = await Admin.create({
+//         phone: "6201269225", email: "nirajsingh4141@gmail.com", password: "Changer@123", role: "admin", adminPanel: "admin.matka.com", userPanel: "user.matka.com"
+//     });
+//     console.log(newAdmin);
+// };
+// (async () => {
+//     await createAdminService()
+// })()

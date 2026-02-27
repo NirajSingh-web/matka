@@ -1,7 +1,17 @@
 import express from "express";
 import { getAdminDetails, loginAdmin } from "../controllers/admin/auth";
 import { AdminAuth } from "../middleware/auth.middlware";
+import { createMarket, deleteMarket, getAllMarkets, updateMarket } from "../controllers/admin/Market";
+import { createMarketResult, deleteMarketResult, getAllMarketResults, updateMarketResult } from "../controllers/admin/Result";
 const adminRoute = express.Router();
 adminRoute.post("/login", loginAdmin);
 adminRoute.get("/details", AdminAuth, getAdminDetails);
+adminRoute.post("/create-market", createMarket);
+adminRoute.get("/market-list", getAllMarkets);
+adminRoute.put("/market-update/:id", updateMarket);
+adminRoute.delete("/market-delete/:id", deleteMarket);
+adminRoute.post("/create-market-result", createMarketResult);
+adminRoute.get("/result-list", getAllMarketResults);
+adminRoute.put("/result-update/:id", updateMarketResult);
+adminRoute.delete("/result-delete/:id", deleteMarketResult);
 export default adminRoute;
