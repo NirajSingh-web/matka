@@ -1,15 +1,12 @@
 import { useState } from "react";
 import { useMarkets, type Market } from "../hook/useMarket";
 import MarketDialog from "../screen/MarketDialog";
-// import { Market } from "../types/market";
-
-const MarketTable = () => {
+import LoadingPage from "./Loadingpage";
+const MarketTable:React.FC = () => {
   const { data: markets, isLoading } = useMarkets();
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<Market | null>(null);
-
-  if (isLoading) return <p>Loading...</p>;
-
+  if (isLoading) return <p><LoadingPage/></p>;
   return (
     <div className="p-6">
       <button

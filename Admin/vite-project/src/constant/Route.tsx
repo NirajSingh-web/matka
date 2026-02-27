@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import LoginPage from "../component/Login";
 import LoadingPage from "../component/Loadingpage";
+import MarketTable from "../component/MarketTable";
 const withSuspense = <P extends object>(
   Component: React.FC<P>,
   props?: Partial<P>
@@ -24,7 +25,10 @@ export const routerList = createBrowserRouter([
     path: "",
     element: <App />,
     children: [
-      
+      {
+        path:"/",
+        element:<MarketTable/>
+      }
     ],
   },
 ]);
