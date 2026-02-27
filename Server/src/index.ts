@@ -3,6 +3,8 @@ import cors from "cors";
 import adminRoute from "./routes/admin.routes";
 import userRoute from "./routes/user.routes";
 import connectDB from "./confiq/confiq";
+import dotenv from 'dotenv';
+dotenv.config()
 const app = express();
 app.use(cors());
 app.use(express.json());
