@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
+import LoginPage from "../component/Login";
 import LoadingPage from "../component/Loadingpage";
 const withSuspense = <P extends object>(
   Component: React.FC<P>,
@@ -17,7 +18,7 @@ export const routerList = createBrowserRouter([
   },
   {
     path: "/login",
-    element:<></> ,
+    element:<LoginPage/> ,
   },
   {
     path: "",
