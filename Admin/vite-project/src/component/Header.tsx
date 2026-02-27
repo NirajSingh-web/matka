@@ -6,17 +6,16 @@ interface HeaderProps {
   title?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ title = "MyApp" }) => {
+const Header: React.FC<HeaderProps> = ({ title = "Matka" }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "About", path: "/about" },
-    { name: "Contact", path: "/contact" },
+    { name: "Result", path: "/result" },
   ];
 
   return (
-    <header className="fixed w-full top-0 left-0 z-50 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700 shadow-xl">
+    <header className="sticky w-full top-0 left-0 z-50 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700 shadow-xl">
 
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 

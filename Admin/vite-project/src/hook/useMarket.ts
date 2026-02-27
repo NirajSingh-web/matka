@@ -27,7 +27,7 @@ export const useMarkets = () => {
   return useQuery<Market[]>({
     queryKey: ["markets"],
     queryFn: async () => {
-      const { data } = await apiServer.get("/markets");
+      const { data } = await apiServer.get("/market-list");
       return data?.data || data;
     },
   });
@@ -39,7 +39,7 @@ export const useCreateMarket = () => {
 
   return useMutation({
     mutationFn: async (payload: MarketPayload) => {
-      const { data } = await apiServer.post("/markets", payload);
+      const { data } = await apiServer.post("/create-market", payload);
       return data;
     },
     onSuccess: () => {
@@ -60,7 +60,7 @@ export const useUpdateMarket = () => {
       id: string;
       payload: MarketPayload;
     }) => {
-      const { data } = await apiServer.put(`/markets/${id}`, payload);
+      const { data } = await apiServer.put(`/market-update/${id}`, payload);
       return data;
     },
     onSuccess: () => {
