@@ -7,10 +7,12 @@ import queryClient from './constant/queryClient';
 import { UserProvider } from './constant/UserProvider';
 createRoot(document.getElementById('root')!).render(
   <>
+     <QueryClientProvider client={queryClient}>
     <UserProvider>
-      <QueryClientProvider client={queryClient}>
+   
         <RouterProvider router={routerList} />
+            </UserProvider>
       </QueryClientProvider>
-    </UserProvider>
+
   </>
 )
