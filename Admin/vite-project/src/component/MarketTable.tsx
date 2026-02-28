@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMarkets, type Market } from "../hook/useMarket";
 import MarketDialog from "../screen/MarketDialog";
 import LoadingPage from "./Loadingpage";
+import PageHeadline from "./PageHeadLine";
 export const MarketTable: React.FC = () => {
   const { data: markets, isLoading } = useMarkets();
   const [open, setOpen] = useState(false);
@@ -11,14 +12,9 @@ export const MarketTable: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-8">
-
-      {/* Header Section */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold tracking-wide">
-          Markets Overview
-        </h1>
-
-        <button
+      <PageHeadline
+        title="Market"
+        rightComponent={<button
           onClick={() => {
             setSelected(null);
             setOpen(true);
@@ -27,8 +23,11 @@ export const MarketTable: React.FC = () => {
                      text-sm font-medium transition duration-200 shadow-md"
         >
           + Create Market
-        </button>
-      </div>
+        </button>}
+      />
+
+
+
 
       {/* Table Card */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
@@ -72,11 +71,10 @@ export const MarketTable: React.FC = () => {
 
                 <td className="p-4 text-center">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      market.status
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${market.status
                         ? "bg-green-500/20 text-green-400"
                         : "bg-red-500/20 text-red-400"
-                    }`}
+                      }`}
                   >
                     {market.status ? "Active" : "Inactive"}
                   </span>
