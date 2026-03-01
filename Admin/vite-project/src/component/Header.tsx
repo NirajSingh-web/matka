@@ -1,21 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, NavLink } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface HeaderProps {
   title?: string;
-}
-
+};
 const Header: React.FC<HeaderProps> = ({ title = "Matka" }) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
   const navLinks = [
-    { name: "Home", path: "/" },
+    { name: "Market", path: "/" },
     { name: "Result", path: "/result" },
   ];
-
   return (
-    <header className="sticky w-full top-0 left-0 z-50 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700 shadow-xl">
+    <header className="sticky w-full top-0 left-0 z-50 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700 shadow-xl ">
 
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
@@ -55,50 +51,7 @@ const Header: React.FC<HeaderProps> = ({ title = "Matka" }) => {
             </NavLink>
           ))}
         </nav>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden text-slate-300 hover:text-white transition"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <span className="material-icons text-3xl">
-            {isOpen ? "close" : "menu"}
-          </span>
-        </button>
       </div>
-
-      {/* Mobile Nav */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.25 }}
-            className="md:hidden bg-slate-900 border-t border-slate-700"
-          >
-            <nav className="flex flex-col gap-6 p-6">
-              {navLinks.map((link) => (
-                <NavLink
-                  key={link.name}
-                  to={link.path}
-                  onClick={() => setIsOpen(false)}
-                  className={({ isActive }) =>
-                    `font-medium transition ${
-                      isActive
-                        ? "text-indigo-400"
-                        : "text-slate-300 hover:text-white"
-                    }`
-                  }
-                >
-                  {link.name}
-                </NavLink>
-              ))}
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
     </header>
   );
 };

@@ -81,16 +81,16 @@ export const loginAdmin = async (req: Request, res: Response) => {
 };
 export const getAdminDetails = async (req: AuthRequest, res: Response) => {
     try {
-        const adminId = (req as any).user?.id;
+        const {_id}=req.user||{}
 
-        if (!adminId) {
+        if (!_id) {
             return res.status(401).json({
                 success: false,
                 message: "Unauthorized",
             });
         }
 
-        const admin = await Admin.findById(adminId);
+        const admin = await Admin.findById(_id);
 
         if (!admin) {
             return res.status(404).json({

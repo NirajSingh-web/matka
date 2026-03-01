@@ -1,17 +1,19 @@
 import { Dialog } from "@headlessui/react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // import { Market, MarketPayload } from "../types/market";
 // import { useCreateMarket, useUpdateMarket } from "../hooks/useMarket";
 import { useCreateMarket, useUpdateMarket, type Market, type MarketPayload } from "../hook/useMarket";
-
+import { toast } from "react-toastify";
+import type { AxiosError } from "axios";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   editData?: Market | null;
+  refetch: () => void;
 }
 
-const MarketDialog: React.FC<Props> = ({ isOpen, onClose, editData }) => {
-  const { register, handleSubmit, reset } = useForm<MarketPayload>({
+const MarketDialog: React.FC<Props> = ({ isOpen, onClose, editData, refetch }) => {
+  const { register, handleSubmit, reset, control } = useForm<MarketPayload>({
     defaultValues: editData || {},
   });
 
@@ -21,9 +23,12 @@ const MarketDialog: React.FC<Props> = ({ isOpen, onClose, editData }) => {
     onSuccess: () => {
       onClose();
       reset();
+      refetch?.();
+      toast.success("market created SuccessFully")
     },
-    onError: () => {
-
+    onError: (e: AxiosError) => {
+      const error = e.response?.data as any;
+      toast.error(error.message || error.error)
     }
   }
   const onSubmit = (data: MarketPayload) => {
@@ -39,14 +44,14 @@ const MarketDialog: React.FC<Props> = ({ isOpen, onClose, editData }) => {
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
 
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <Dialog.Panel className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-8 text-slate-200">
+        <Dialog.Panel className="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-8 text-slate-200 custom-scrollbar max-h-[80vh]">
 
           {/* Title */}
           <Dialog.Title className="text-xl font-semibold mb-6">
             {editData ? "Update Market" : "Create Market"}
           </Dialog.Title>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 ">
 
             {/* Market Name */}
             <div className="flex flex-col gap-2">
@@ -102,16 +107,23 @@ const MarketDialog: React.FC<Props> = ({ isOpen, onClose, editData }) => {
             {/* Status */}
             <div className="flex flex-col gap-2">
               <label className="text-sm text-slate-400">Status</label>
-              <select
-                {...register("status")}
-                className="px-4 py-2.5 rounded-lg bg-slate-800 text-slate-200
-                       border border-slate-700
-                       focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500
-                       outline-none transition"
-              >
-                <option value="true">Active</option>
-                <option value="false">Inactive</option>
-              </select>
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => (
+                  <div
+                    onClick={() => field.onChange(!field.value)}
+                    className={`w-14 h-7 flex items-center rounded-full p-1 cursor-pointer
+                        transition-colors duration-300
+                        ${field.value ? "bg-green-500" : "bg-gray-400"}`}
+                  >
+                    <div
+                      className={`bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-300
+                          ${field.value ? "translate-x-7" : "translate-x-0"}`}
+                    />
+                  </div>
+                )}
+              />
             </div>
 
             {/* Buttons */}

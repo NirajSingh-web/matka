@@ -19,33 +19,32 @@ export const createMarketSchema = Joi.object({
     .max(100)
     .required()
     .messages({
-      "string.empty": "Market name is required"
+      "string.empty": "Market name is required",
     }),
 
-  open_time: Joi.date()
-    .iso()
+  open_time: Joi.string()
+    .pattern(/^([01]\d|2[0-3]):([0-5]\d)$/)
     .required()
     .messages({
-      "date.base": "open_time must be a valid date",
-      "any.required": "open_time is required"
+      "string.empty": "open_time is required",
+      "string.pattern.base": "open_time must be in HH:mm format",
     }),
 
-  close_time: Joi.date()
-    .iso()
-    .greater(Joi.ref("open_time"))
+  close_time: Joi.string()
+    .pattern(/^([01]\d|2[0-3]):([0-5]\d)$/)
     .required()
     .messages({
-      "date.greater": "close_time must be greater than open_time"
+      "string.empty": "close_time is required",
+      "string.pattern.base": "close_time must be in HH:mm format",
     }),
 
-  result_time: Joi.date()
-    .iso()
-    .greater(Joi.ref("close_time"))
+  result_time: Joi.string()
+    .pattern(/^([01]\d|2[0-3]):([0-5]\d)$/)
     .required()
     .messages({
-      "date.greater": "result_time must be greater than close_time"
+      "string.empty": "result_time is required",
+      "string.pattern.base": "result_time must be in HH:mm format",
     }),
 
-  status: Joi.boolean()
-    .optional()
+  status: Joi.boolean().optional(),
 });
