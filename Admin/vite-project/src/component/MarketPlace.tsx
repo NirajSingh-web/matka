@@ -1,107 +1,84 @@
 import React from "react";
-import { useMarketPagination } from "../hook/useMarketPagination";
-import MarketResult from "./PageHeadLine";
-
-interface MarketItem {
-  _id: string;
-  market_id: string;
-  result: string;
-  status: "OPEN" | "CLOSED";
-  createdAt: string;
-}
+import { motion } from "framer-motion";
+import PageHeadline from "./PageHeadLine";
+import AddMarketDialog from "./AddMarketDialog.tsx";
+import {
+  useMarketResults,
+  useCreateMarketResult,
+} from "../hook/useMarketResult";
+import { useMarkets } from "../hook/useMarket";
+import { MarketResult } from "../types/market.type.ts";
 
 const MarketSection: React.FC = () => {
-  // ✅ Dummy Data
-  const dummyData: MarketItem[] = [
-    {
-      _id: "1",
-      market_id: "MKT-1001",
-      result: "WIN",
-      status: "OPEN",
-      createdAt: new Date().toISOString(),
-    },
-    {
-      _id: "2",
-      market_id: "MKT-1002",
-      result: "LOSS",
-      status: "CLOSED",
-      createdAt: new Date().toISOString(),
-    },
-    {
-      _id: "3",
-      market_id: "MKT-1003",
-      result: "WIN",
-      status: "OPEN",
-      createdAt: new Date().toISOString(),
-    },
-    {
-      _id: "4",
-      market_id: "MKT-1004",
-      result: "LOSS",
-      status: "CLOSED",
-      createdAt: new Date().toISOString(),
-    },
-  ];
+  const { data: markets = [] } = useMarkets();
 
   const {
-    page,
-    totalPages,
-    paginatedData,
-    nextPage,
-    prevPage,
-  } = useMarketPagination(dummyData, 3);
+    data: results = [],
+    isLoading,
+  } = useMarketResults();
 
-  const getStatusStyle = (status: "OPEN" | "CLOSED") =>
-    status === "OPEN"
-      ? "bg-green-100 text-green-700 border border-green-300"
-      : "bg-red-100 text-red-700 border border-red-300";
+  const { mutate: createResult } = useCreateMarketResult();
+
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+
+  const handleAddMarket = (formData: any) => {
+    createResult(formData, {
+      onSuccess: () => {
+        setIsDialogOpen(false);
+      },
+    });
+  };
+
+  if (isLoading) {
+    return <div className="text-white text-center mt-20">Loading...</div>;
+  }
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="bg-white shadow-xl rounded-2xl p-6">
+    <div className="min-h-screen bg-slate-950 p-10 text-slate-200">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="max-w-6xl mx-auto bg-slate-900 p-8 rounded-3xl shadow-2xl"
+      >
+        <div className="flex justify-between items-center">
+          <PageHeadline title="Market Results" />
 
-        {/* ✅ Header Component */}
-        <MarketResult title="Market Results" />
+          <button
+            onClick={() => setIsDialogOpen(true)}
+            className="px-5 py-2 rounded-xl text-white 
+                       bg-gradient-to-r from-green-600 to-emerald-500"
+          >
+            + Add Result
+          </button>
+        </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gray-50 text-left text-gray-600 uppercase text-sm">
-                <th className="px-6 py-3">Market ID</th>
-                <th className="px-6 py-3">Result</th>
-                <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3">Date & Time</th>
+        <div className="mt-6 border border-slate-700 rounded-2xl overflow-hidden">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-800 text-slate-400">
+              <tr>
+                <th className="px-6 py-4 text-left">Market</th>
+                <th className="px-6 py-4 text-left">Result</th>
+                <th className="px-6 py-4 text-left">Status</th>
+                <th className="px-6 py-4 text-left">Created</th>
               </tr>
             </thead>
 
             <tbody>
-              {paginatedData.map((item) => (
-                <tr key={item._id} className="border-t hover:bg-gray-50">
-                  <td className="px-6 py-4 font-medium">
-                    {item.market_id}
+              {results.map((item: MarketResult) => (
+                <tr key={item._id} className="border-t border-slate-800">
+                  <td className="px-6 py-4">
+                    {item.market_id?.market_name}
                   </td>
 
-                  <td
-                    className={`px-6 py-4 font-semibold ${
-                      item.result === "WIN"
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
+                  <td className="px-6 py-4 font-semibold">
                     {item.result}
                   </td>
 
                   <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 text-xs font-semibold rounded-full ${getStatusStyle(
-                        item.status
-                      )}`}
-                    >
-                      {item.status}
-                    </span>
+                    {item.status ? "Active" : "Inactive"}
                   </td>
 
-                  <td className="px-6 py-4 text-gray-500">
+                  <td className="px-6 py-4">
                     {new Date(item.createdAt).toLocaleString()}
                   </td>
                 </tr>
@@ -109,31 +86,14 @@ const MarketSection: React.FC = () => {
             </tbody>
           </table>
         </div>
+      </motion.div>
 
-        {/* ✅ Pagination */}
-        <div className="flex justify-between items-center mt-6">
-          <button
-            onClick={prevPage}
-            disabled={page === 1}
-            className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50"
-          >
-            Prev
-          </button>
-
-          <span>
-            Page {page} of {totalPages}
-          </span>
-
-          <button
-            onClick={nextPage}
-            disabled={page === totalPages}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
-
-      </div>
+      <AddMarketDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onAdd={handleAddMarket}
+        markets={markets}
+      />
     </div>
   );
 };
