@@ -12,9 +12,7 @@ const Header: React.FC<HeaderProps> = ({ title = "Matka" }) => {
   ];
   return (
     <header className="sticky w-full top-0 left-0 z-50 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700 shadow-xl ">
-
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-
         {/* Logo */}
         <Link
           to="/"
@@ -22,7 +20,6 @@ const Header: React.FC<HeaderProps> = ({ title = "Matka" }) => {
         >
           {title}
         </Link>
-
         {/* Desktop Nav */}
         <nav className="hidden md:flex gap-10">
           {navLinks.map((link) => (
@@ -55,5 +52,4 @@ const Header: React.FC<HeaderProps> = ({ title = "Matka" }) => {
     </header>
   );
 };
-
 export default Header;
