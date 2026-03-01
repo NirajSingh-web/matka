@@ -11,9 +11,9 @@ const logout = async () => {
   } catch (e) {
     console.log(e);
   } finally {
-    // removeToken()
-    // delete apiServer.defaults.headers.common["Authorization"];
-    // window.location.href = "/login";
+    removeToken()
+    delete apiServer.defaults.headers.common["Authorization"];
+    window.location.href = "/login";
   }
 };
 const capMarketServerHeaders = (config: any) => {

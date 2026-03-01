@@ -118,3 +118,82 @@ export const getLiveResult = async (
         });
     }
 };
+function getFinancialYear() {
+  const now = new Date();
+  let startYear: number, endYear: number;
+
+  if (now.getMonth() + 1 >= 4) {
+    startYear = now.getFullYear();
+    endYear = now.getFullYear() + 1;
+  } else {
+    startYear = now.getFullYear() - 1;
+    endYear = now.getFullYear();
+  }
+  const start = new Date(startYear, 3, 1); 
+  const end = new Date(endYear, 2, 31, 23, 59, 59); 
+  return { start, end, startYear, endYear };
+}
+
+export const getMarketCalendar = async (req: Request, res: Response) => {
+  try {
+    const { market_id } = req.query; 
+    if (!market_id) {
+      return res.status(400).json({ success: false, message: "market_id is required" });
+    }
+    const market = await Market.findOne({ _id: market_id, status: true });
+    if (!market) {
+      return res.status(404).json({ success: false, message: "Market not found or inactive" });
+    };
+    const { start, end, startYear, endYear } = getFinancialYear();
+    const results = await MarketResult.find({
+      market_id: market._id,
+      result_time: { $gte: start, $lte: end }
+    });
+    const resultMap: Record<string, string> = {};
+    results.forEach(r => {
+      const dayStr = r.result_time.toISOString().slice(0, 10);
+      resultMap[dayStr] = r.result;
+    });
+    const months = [
+      { name: "APR", month: 3 },
+      { name: "MAY", month: 4 },
+      { name: "JUN", month: 5 },
+      { name: "JUL", month: 6 },
+      { name: "AUG", month: 7 },
+      { name: "SEP", month: 8 },
+      { name: "OCT", month: 9 },
+      { name: "NOV", month: 10 },
+      { name: "DEC", month: 11 },
+      { name: "JAN", month: 0 },
+      { name: "FEB", month: 1 },
+      { name: "MAR", month: 2 },
+    ];
+
+    // Build calendar: 31 days × 12 months
+    const calendar: any[] = [];
+    for (let day = 1; day <= 31; day++) {
+      const row: Record<string, string | number> = { day };
+      months.forEach((m, idx) => {
+        let year = idx <= 8 ? startYear : endYear; // APR→DEC: startYear, JAN→MAR: endYear
+        const dateStr = new Date(year, m.month, day).toISOString().slice(0, 10);
+        row[m.name] = resultMap[dateStr] || "";
+      });
+      calendar.push(row);
+    }
+
+    return res.json({
+      success: true,
+      market: market.market_name,
+      year: `${startYear}-${endYear}`,
+      months: months.map(m => m.name),
+      calendar
+    });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      message: (err as Error).message
+    });
+  }
+};

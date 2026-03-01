@@ -6,9 +6,13 @@ import AuthProvider from "./constant/AuthProvider";
 function App() {
   return (
     <>
-      <Header />
       <AuthProvider>
-        <Outlet />
+        <div className="h-[100vh] flex flex-col  custom-scrollbar">
+          <Header />
+          <div className="flex-1 overflow-auto">
+            <Outlet />
+          </div>
+        </div>
       </AuthProvider>
     </>
   );

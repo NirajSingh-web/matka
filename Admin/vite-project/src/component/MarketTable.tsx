@@ -4,14 +4,14 @@ import MarketDialog from "../screen/MarketDialog";
 import LoadingPage from "./Loadingpage";
 import PageHeadline from "./PageHeadLine";
 export const MarketTable: React.FC = () => {
-  const { data: markets, isLoading } = useMarkets();
+  const { data: markets, isLoading ,refetch} = useMarkets();
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<Market | null>(null);
 
   if (isLoading) return <LoadingPage />;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-8">
+    <div className="min-h-screen bg-slate-950 text-slate-200 p-2">
       <PageHeadline
         title="Market"
         rightComponent={<button
@@ -25,13 +25,8 @@ export const MarketTable: React.FC = () => {
           + Create Market
         </button>}
       />
-
-
-
-
       {/* Table Card */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
-
+      <div className="bg-slate-900 border border-slate-800    rounded-b-lg shadow-xl custom-scrollbar">
         <table className="min-w-full text-sm">
 
           {/* Table Head */}
@@ -97,11 +92,11 @@ export const MarketTable: React.FC = () => {
 
         </table>
       </div>
-
       <MarketDialog
         isOpen={open}
         onClose={() => setOpen(false)}
         editData={selected}
+        refetch={refetch}
       />
     </div>
   );
