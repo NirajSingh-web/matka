@@ -1,6 +1,10 @@
-//import { FaWhatsapp } from "react-icons/fa";
+import type { MarketItem } from "../hook/useData";
 
-const PremiumCard = () => {
+//import { FaWhatsapp } from "react-icons/fa";
+interface GameListData {
+  markets: MarketItem[]
+}
+const PremiumCard: React.FC<GameListData> = ({ markets }) => {
   return (
     <section className="grid grid-cols-1 gap-6 lg:grid-cols-2 p-4 md:p-6">
       <div
@@ -40,23 +44,12 @@ const PremiumCard = () => {
           <p className="text-xl md:text-2xl tracking-wide">
             ♕♕ DEV BHAI KHAIWAL ♕♕
           </p>
-
-          <p>⏰ सदर बाजार ----------- 1:30 PM</p>
-          <p>⏰ ग्वालियर -------------- 2:30 PM</p>
-          <p>⏰ दिल्ली बाजार ---------- 2:50 PM</p>
-          <p>⏰ दिल्ली मटका ---------- 3:20 PM</p>
-          <p>⏰ श्री गणेश -------------- 4:20 PM</p>
-          <p>⏰ आगरा ---------------- 5:20 PM</p>
-          <p>⏰ फरीदाबाद ------------- 5:50 PM</p>
-          <p>⏰ अलवर ---------------- 7:20 PM</p>
-          <p>⏰ गाज़ियाबाद ------------ 8:40 PM</p>
-          <p>⏰ द्वारका ---------------- 10:10 PM</p>
-          <p>⏰ गली ------------------ 11:20 PM</p>
-          <p>⏰ दिसावर --------------- 1:30 AM</p>
-
+          {
+            markets.map(e => (
+              <p>⏰ {e.market_name} ----------- {e.result_time}</p>
+            ))
+          }
           <p className="mt-4 text-lg">🙂🙂 DEV BHAI KHAIWAL 🙂🙂</p>
-
-          {/* WhatsApp Button */}
           <a
             href="https://wa.me/918571979107"
             target="_blank"

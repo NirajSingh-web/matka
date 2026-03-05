@@ -30,7 +30,7 @@ const YearCard = ({ item }: Props) => {
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center">
-        <Link to={`/${item.slug}`} className="group relative">
+        <Link to={`/result-table/${item._id}`} className="group relative">
           <h4 className="text-xl md:text-3xl font-bold tracking-wide text-center uppercase transition-all duration-300 group-hover:scale-105">
             <span className="relative bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
               {item.name}

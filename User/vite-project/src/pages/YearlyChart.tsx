@@ -1,8 +1,4 @@
-import Navbar from "../components/Navbar";
-import MenuBar from "../components/MenuBar";
 import YearlyChartGrid from "../components/YearlyChart";
-import Footer from "../components/Footer";
-
 const YearlyChart = () => {
   return (
     <>

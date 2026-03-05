@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Market } from "../../model/market.model";
 import { MarketResult } from "../../model/result.model";
 import { AuthRequest } from "../../middleware/auth.middlware";
+import { Types } from "joi";
 const convertISTtoUTC = (istDateString: string): Date => {
     const istDate = new Date(istDateString.replace(" ", "T") + "+05:30");
     return new Date(istDate.toISOString());
@@ -35,7 +36,7 @@ export const getPivotMarketResults = async (
         }
         const groupedByDate: any = {};
         results.forEach((item: any) => {
-            const dateKey = item.result_time.toISOString().split("T")[0];
+            const dateKey = toISTDateString(item.result_time);
             if (!groupedByDate[dateKey]) {
                 groupedByDate[dateKey] = {};
             };
@@ -72,63 +73,77 @@ export const getPivotMarketResults = async (
         });
     }
 };
-const getTimeString = (date: Date) => date.toTimeString().split(" ")[0];
 export const getLiveResult = async (req: AuthRequest, res: Response) => {
     try {
         const { _id } = req.user || {};
         const now = new Date();
-        const currentTime = getTimeString(now);
-        const currentMarket = await Market.findOne({
+        const markets = await Market.find({ createdBy: _id })
+            .sort({ open_time: 1 })
+            .lean();
+        if (!markets.length) {
+            return res.status(404).json({ message: "No markets found" });
+        };
+        const latestResult = await MarketResult.findOne({
             createdBy: _id,
-            $expr: {
-                $lte: [
-                    { $dateToString: { format: "%H:%M:%S", date: "$result_time" } },
-                    currentTime
-                ]
-            }
         })
-            .sort({ result_time: -1 });
-
-        let current = null;
-        if (currentMarket) {
-            const latestResult = await MarketResult.findOne({
-                market_id: currentMarket._id
-            }).sort({ result_time: -1 });
-
-            current = {
-                gameName: currentMarket.market_name,
-                result: latestResult ? latestResult.result : null
-            };
+            .sort({ result_time: -1 })
+            .lean();
+        let currentMarket: any = null;
+        let upcomingMarket: any = null;
+        if (latestResult) {
+            const index = markets.findIndex(
+                m => m._id.toString() === latestResult.market_id.toString()
+            );
+            currentMarket = markets[index] || null;
+            upcomingMarket = markets[index + 1] || markets[0];
+        } else {
+            upcomingMarket = markets.find(m => m.open_time.getTime() > now.getTime()) || markets[0];
         }
-
-        // 2️⃣ Get upcoming market: result_time (time only) > current time
-        const upcomingMarket = await Market.findOne({
-            createdBy: _id,
-            $expr: {
-                $gt: [
-                    { $dateToString: { format: "%H:%M:%S", date: "$result_time" } },
-                    currentTime
-                ]
-            }
+        const marketIds = [currentMarket?._id, upcomingMarket?._id].filter(Boolean);
+        const results = await MarketResult.find({
+            market_id: { $in: marketIds }
         })
-            .sort({ result_time: 1 });
-
+            .sort({ result_time: -1 })
+            .limit(10)
+            .lean();
+        const currentResults = results.filter(
+            r => r.market_id.toString() === currentMarket?._id?.toString()
+        );
+        const upcomingResults = results.filter(
+            r => r.market_id.toString() === upcomingMarket?._id?.toString()
+        );
+        const current = currentMarket
+            ? {
+                gameName: currentMarket.market_name,
+                current_result: currentResults[0]?.result || null,
+                prev_result: currentResults[1]?.result || null
+            }
+            : null;
         const upcoming = upcomingMarket
             ? {
                 gameName: upcomingMarket.market_name,
-                result: null
+                current_result: upcomingResults[0]?.result || null,
+                prev_result: upcomingResults[1]?.result || null
             }
             : null;
 
         return res.json({ current, upcoming });
+
     } catch (error: any) {
         return res.status(500).json({ message: error.message });
     }
 };
+export const toISTDateString = (date: Date | string): string => {
+    const d = new Date(date);
+
+    // add IST offset (5h 30m)
+    const ist = new Date(d.getTime() + (5.5 * 60 * 60 * 1000));
+
+    return ist.toISOString().slice(0, 10); // YYYY-MM-DD
+};
 function getFinancialYear() {
     const now = new Date();
     let startYear: number, endYear: number;
-
     if (now.getMonth() + 1 >= 4) {
         startYear = now.getFullYear();
         endYear = now.getFullYear() + 1;
@@ -139,14 +154,13 @@ function getFinancialYear() {
     const start = new Date(startYear, 3, 1);
     const end = new Date(endYear, 2, 31, 23, 59, 59);
     return { start, end, startYear, endYear };
-}
-
+};
 export const getMarketCalendar = async (req: Request, res: Response) => {
     try {
         const { market_id } = req.query;
         if (!market_id) {
             return res.status(400).json({ success: false, message: "market_id is required" });
-        }
+        };
         const market = await Market.findOne({ _id: market_id, status: true });
         if (!market) {
             return res.status(404).json({ success: false, message: "Market not found or inactive" });
@@ -158,7 +172,7 @@ export const getMarketCalendar = async (req: Request, res: Response) => {
         });
         const resultMap: Record<string, string> = {};
         results.forEach(r => {
-            const dayStr = r.result_time.toISOString().slice(0, 10);
+            const dayStr = toISTDateString(r.result_time);
             resultMap[dayStr] = r.result;
         });
         const months = [

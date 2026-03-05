@@ -1,33 +1,30 @@
-import Navbar from "../components/Navbar";
-import MenuBar from "../components/MenuBar";
 import WelcomeSection from "../components/WelcomeSection";
 import LiveTime from "../components/LiveTime";
-import ResultStrip from "../components/MorningResult";
-import MorningResult from "../components/MorningResult";
-import Notification from "../components/notification";
 import FastestHeading from "../components/FastestHeading";
 import PremiumCard from "../components/PremiumCard";
 import GameList from "../components/GameList";
 import ChartTable from "../components/ChartTable";
 import InfoSection from "../components/InfoSection";
 import BlogSection from "../components/BlogSection";
-import Footer from "../components/Footer";
+import { useGetAllMarkets, useGetLiveResult } from "../hook/useData";
+import ResultBanner from "../components/MorningResult";
 const Home = () => {
+  const { data: marketResponse } = useGetAllMarkets();
+  const { data } = useGetLiveResult();
+  const { current, upcoming } = data || {};
   return (
     <>
       <WelcomeSection />
       <LiveTime />
-      <ResultStrip />
-      <MorningResult />
-      <Notification message="Today's result will update at 2:30 PM" />
+      <ResultBanner name={upcoming?.gameName || "-"} current={upcoming?.current_result} prev={upcoming?.prev_result} isUpcoming={true} />
+      <ResultBanner name={current?.gameName || "-"} current={current?.current_result} prev={current?.prev_result} />
       <FastestHeading />
-      <PremiumCard />
-      <GameList />
+      <PremiumCard markets={marketResponse?.data || []}/>
+      <GameList markets={marketResponse?.data || []} />
       <ChartTable />
       <InfoSection />
       <BlogSection />
     </>
   );
 };
-
 export default Home;

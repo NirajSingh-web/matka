@@ -5,7 +5,8 @@ export const extractDomain = (url: string): string | null => {
       ? url
       : `https://${url}`;
     const parsedUrl = new URL(formattedUrl);
-    return parsedUrl.hostname;
+    // return parsedUrl.hostname;
+    return "user.matka.com"
   } catch (error) {
     return null; 
   }

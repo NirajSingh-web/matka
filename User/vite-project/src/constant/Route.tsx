@@ -18,7 +18,7 @@ export const routerList = createBrowserRouter([
         element: <YearlyChart/>
       },
       {
-        path: "result-table",
+        path: "/result-table/:market_id",
         element: <CalendarTable/>
       }
       
