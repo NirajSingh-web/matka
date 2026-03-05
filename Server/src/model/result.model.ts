@@ -7,6 +7,7 @@ export interface IMarketResult extends Document {
     createdAt: Date;
     updatedAt: Date;
     result_time: Date;
+    createdBy:Types.ObjectId;
 };
 const MarketResultSchema: Schema = new Schema(
     {
@@ -19,11 +20,6 @@ const MarketResultSchema: Schema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "Admin",
             required: true
-        },
-        symbol: {
-            type: String,
-            required: true,
-            trim: true
         },
         result: {
             type: String,
