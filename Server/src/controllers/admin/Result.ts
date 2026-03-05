@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 import { MarketResult } from "../../model/result.model";
 import { createMarketResultSchema } from "../../validation/validation";
+import { AuthRequest } from "../../middleware/auth.middlware";
 const convertISTtoUTC = (istDateString: string): Date => {
     const istDate = new Date(istDateString.replace(" ", "T") + "+05:30");
     return new Date(istDate.toISOString());
 };
-export const createMarketResult = async (req: Request, res: Response) => {
+export const createMarketResult = async (req: AuthRequest, res: Response) => {
     try {
         const { error, value } = createMarketResultSchema.validate(req.body);
         if (error) {
@@ -14,6 +15,7 @@ export const createMarketResult = async (req: Request, res: Response) => {
                 message: error.details[0].message
             });
         };
+        const{_id}=req.user||{}
         const { market_id, symbol, result, status, result_time } = value;
         const utcResultTime = convertISTtoUTC(result_time);
         const newResult = await MarketResult.create({
@@ -21,7 +23,8 @@ export const createMarketResult = async (req: Request, res: Response) => {
             symbol,
             result,
             status,
-            result_time: utcResultTime
+            result_time: utcResultTime,
+            createdBy:_id
         });
         return res.status(201).json({
             success: true,

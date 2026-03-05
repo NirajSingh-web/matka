@@ -1,56 +1,38 @@
-import React from "react";
-import { motion } from "framer-motion";
-import PageHeadline from "./PageHeadLine";
-import AddMarketDialog from "./AddMarketDialog.tsx";
+import React, { useState } from "react";
+import PageHeadline from "./PageHeadLine.tsx";
 import {
   useMarketResults,
-  useCreateMarketResult,
-} from "../hook/useMarketResult";
-import { useMarkets } from "../hook/useMarket";
-import { MarketResult } from "../types/market.type.ts";
+} from "../hook/useResult.ts";
+import type { MarketResult } from "../types/market.type.ts";
+import ResultDialog from "../screen/ResultDialog.tsx";
+import LoadingPage from "./Loadingpage.tsx";
 
 const MarketSection: React.FC = () => {
-  const { data: markets = [] } = useMarkets();
 
   const {
     data: results = [],
     isLoading,
+    refetch
   } = useMarketResults();
-
-  const { mutate: createResult } = useCreateMarketResult();
-
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
-
-  const handleAddMarket = (formData: any) => {
-    createResult(formData, {
-      onSuccess: () => {
-        setIsDialogOpen(false);
-      },
-    });
-  };
-
+  const [editData,setEditData]=useState(null);
   if (isLoading) {
-    return <div className="text-white text-center mt-20">Loading...</div>;
+    return <LoadingPage/>
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 p-10 text-slate-200">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="max-w-6xl mx-auto bg-slate-900 p-8 rounded-3xl shadow-2xl"
-      >
-        <div className="flex justify-between items-center">
-          <PageHeadline title="Market Results" />
-
+    <div className="min-h-screen bg-slate-950 p-2 text-slate-200">
+     
+       
+          <PageHeadline title="Market Results" rightComponent={
           <button
             onClick={() => setIsDialogOpen(true)}
             className="px-5 py-2 rounded-xl text-white 
                        bg-gradient-to-r from-green-600 to-emerald-500"
           >
             + Add Result
-          </button>
-        </div>
+          </button>} />
+
 
         <div className="mt-6 border border-slate-700 rounded-2xl overflow-hidden">
           <table className="w-full text-sm">
@@ -79,20 +61,24 @@ const MarketSection: React.FC = () => {
                   </td>
 
                   <td className="px-6 py-4">
-                    {new Date(item.createdAt).toLocaleString()}
+                    {item.createdAt}
+                  </td>
+                  
+                  <td className="px-6 py-4">
+                     <button onClick={()=>{setEditData(item),setIsDialogOpen(true)}}>update</button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </motion.div>
+   
 
-      <AddMarketDialog
+      <ResultDialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
-        onAdd={handleAddMarket}
-        markets={markets}
+        editData={editData}
+        refetch={refetch}
       />
     </div>
   );

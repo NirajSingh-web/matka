@@ -15,9 +15,3 @@ export interface MarketResult {
   status: boolean;
   createdAt: string;
 }
-
-export interface MarketResultPayload {
-  market_id: string;
-  result: number;
-  status: boolean;
-}

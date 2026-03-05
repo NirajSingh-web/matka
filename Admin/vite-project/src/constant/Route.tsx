@@ -4,7 +4,7 @@ import App from "../App";
 import LoginPage from "../component/Login";
 import LoadingPage from "../component/Loadingpage";
 import { MarketTable } from "../component/MarketTable";
-import MarketSection from "../component/MarketPlace";
+import MarketSection from "../component/Result";
 const withSuspense = <P extends object>(
   Component: React.FC<P>,
   props?: Partial<P>

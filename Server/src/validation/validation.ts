@@ -1,16 +1,15 @@
 import Joi from "joi";
 export const createMarketResultSchema = Joi.object({
   market_id: Joi.string().required(),
-  symbol: Joi.string().trim().required(),
   result: Joi.string().required(),
   status: Joi.boolean().optional(),
-  result_time: Joi.string()
-    .pattern(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/)
-    .required()
-    .messages({
-      "string.pattern.base":
-        "result_time must be in format YYYY-MM-DD HH:mm:ss (Indian time)"
-    })
+result_time: Joi.string()
+  .pattern(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
+  .required()
+  .messages({
+    "string.pattern.base":
+      "result_time must be in format YYYY-MM-DDTHH:mm"
+  })
 });
 export const createMarketSchema = Joi.object({
   market_name: Joi.string()
