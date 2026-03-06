@@ -1,6 +1,6 @@
 import axios from "axios";
 export const capMarketServer = axios.create({
-  baseURL: "http://localhost:3000/admin",
-  withCredentials: true,
+  baseURL: "http://localhost:3000/user",
+  // withCredentials: true,
 });
 

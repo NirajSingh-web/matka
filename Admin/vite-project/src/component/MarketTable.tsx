@@ -3,15 +3,11 @@ import { useMarkets, type Market } from "../hook/useMarket";
 import MarketDialog from "../screen/MarketDialog";
 import LoadingPage from "./Loadingpage";
 import PageHeadline from "./PageHeadLine";
-import { motion } from "framer-motion";
-
 export const MarketTable: React.FC = () => {
   const { data: markets, isLoading, refetch } = useMarkets();
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<Market | null>(null);
-
   if (isLoading) return <LoadingPage />;
-
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 p-2">
       <PageHeadline
@@ -67,11 +63,10 @@ export const MarketTable: React.FC = () => {
 
                 <td className="p-4 text-center">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      market.status
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${market.status
                         ? "bg-green-500/20 text-green-400"
                         : "bg-red-500/20 text-red-400"
-                    }`}
+                      }`}
                   >
                     {market.status ? "Active" : "Inactive"}
                   </span>

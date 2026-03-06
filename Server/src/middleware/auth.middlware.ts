@@ -60,7 +60,7 @@ export const userAuth = async (
 
         // ⚠️ Recommended: use allowedDomain instead of adminPanel
         const admin = await Admin.findOne({
-            allowedDomain: domain,
+            userPanel: domain,
         }).lean();
 
         if (!admin) {

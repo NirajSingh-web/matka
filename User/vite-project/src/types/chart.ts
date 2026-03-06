@@ -4,4 +4,5 @@ export interface ChartItem {
   gradient: string;
   shadow: string;
   border: string;
+  _id:string;
 }

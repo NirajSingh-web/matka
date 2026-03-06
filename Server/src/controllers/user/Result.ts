@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Market } from "../../model/market.model";
 import { MarketResult } from "../../model/result.model";
 import { AuthRequest } from "../../middleware/auth.middlware";
+import { Types } from "joi";
 const convertISTtoUTC = (istDateString: string): Date => {
     const istDate = new Date(istDateString.replace(" ", "T") + "+05:30");
     return new Date(istDate.toISOString());
@@ -35,7 +36,7 @@ export const getPivotMarketResults = async (
         }
         const groupedByDate: any = {};
         results.forEach((item: any) => {
-            const dateKey = item.result_time.toISOString().split("T")[0];
+            const dateKey = toISTDateString(item.result_time);
             if (!groupedByDate[dateKey]) {
                 groupedByDate[dateKey] = {};
             };
@@ -72,128 +73,145 @@ export const getPivotMarketResults = async (
         });
     }
 };
-
-export const getLiveResult = async (
-    req: AuthRequest,
-    res: Response
-) => {
+export const getLiveResult = async (req: AuthRequest, res: Response) => {
     try {
-        const { _id } = req.user || {}
+        const { _id } = req.user || {};
         const now = new Date();
-        const markets = await Market.find({ createdBy: _id }).select(
-            "_id market_name close_time result_time"
-        );
-        const marketIds = markets.map(m => m._id);
-        const results = await MarketResult.find({
-            market_id: { $in: marketIds },
-            result_time: { $lte: now }
+        const markets = await Market.find({ createdBy: _id })
+            .sort({ open_time: 1 })
+            .lean();
+        if (!markets.length) {
+            return res.status(404).json({ message: "No markets found" });
+        };
+        const latestResult = await MarketResult.findOne({
+            createdBy: _id,
         })
             .sort({ result_time: -1 })
-            .limit(2)
-            .populate("market_id", "market_name close_time result_time");
-        if (!results.length) {
-            return res.json({
-                current: null,
-                previous: null
-            });
+            .lean();
+        let currentMarket: any = null;
+        let upcomingMarket: any = null;
+        if (latestResult) {
+            const index = markets.findIndex(
+                m => m._id.toString() === latestResult.market_id.toString()
+            );
+            currentMarket = markets[index] || null;
+            upcomingMarket = markets[index + 1] || markets[0];
+        } else {
+            upcomingMarket = markets.find(m => m.open_time.getTime() > now.getTime()) || markets[0];
         }
-        const formatResult = (data: any) => {
-            const market = data.market_id;
-            if (now >= market.close_time && now < market.result_time) {
-                return null;
+        const marketIds = [currentMarket?._id, upcomingMarket?._id].filter(Boolean);
+        const results = await MarketResult.find({
+            market_id: { $in: marketIds }
+        })
+            .sort({ result_time: -1 })
+            .limit(10)
+            .lean();
+        const currentResults = results.filter(
+            r => r.market_id.toString() === currentMarket?._id?.toString()
+        );
+        const upcomingResults = results.filter(
+            r => r.market_id.toString() === upcomingMarket?._id?.toString()
+        );
+        const current = currentMarket
+            ? {
+                gameName: currentMarket.market_name,
+                current_result: currentResults[0]?.result || null,
+                prev_result: currentResults[1]?.result || null
             }
-            return {
-                market_name: market.market_name,
-                result: data.result,
-                result_time: data.result_time
-            };
-        };
-        return res.json({
-            current: results[0] ? formatResult(results[0]) : null,
-            previous: results[1] ? formatResult(results[1]) : null
-        });
+            : null;
+        const upcoming = upcomingMarket
+            ? {
+                gameName: upcomingMarket.market_name,
+                current_result: upcomingResults[0]?.result || null,
+                prev_result: upcomingResults[1]?.result || null
+            }
+            : null;
+
+        return res.json({ current, upcoming });
+
     } catch (error: any) {
-        return res.status(500).json({
-            message: error.message
-        });
+        return res.status(500).json({ message: error.message });
     }
 };
+export const toISTDateString = (date: Date | string): string => {
+    const d = new Date(date);
+
+    // add IST offset (5h 30m)
+    const ist = new Date(d.getTime() + (5.5 * 60 * 60 * 1000));
+
+    return ist.toISOString().slice(0, 10); // YYYY-MM-DD
+};
 function getFinancialYear() {
-  const now = new Date();
-  let startYear: number, endYear: number;
-
-  if (now.getMonth() + 1 >= 4) {
-    startYear = now.getFullYear();
-    endYear = now.getFullYear() + 1;
-  } else {
-    startYear = now.getFullYear() - 1;
-    endYear = now.getFullYear();
-  }
-  const start = new Date(startYear, 3, 1); 
-  const end = new Date(endYear, 2, 31, 23, 59, 59); 
-  return { start, end, startYear, endYear };
-}
-
+    const now = new Date();
+    let startYear: number, endYear: number;
+    if (now.getMonth() + 1 >= 4) {
+        startYear = now.getFullYear();
+        endYear = now.getFullYear() + 1;
+    } else {
+        startYear = now.getFullYear() - 1;
+        endYear = now.getFullYear();
+    }
+    const start = new Date(startYear, 3, 1);
+    const end = new Date(endYear, 2, 31, 23, 59, 59);
+    return { start, end, startYear, endYear };
+};
 export const getMarketCalendar = async (req: Request, res: Response) => {
-  try {
-    const { market_id } = req.query; 
-    if (!market_id) {
-      return res.status(400).json({ success: false, message: "market_id is required" });
+    try {
+        const { market_id } = req.query;
+        if (!market_id) {
+            return res.status(400).json({ success: false, message: "market_id is required" });
+        };
+        const market = await Market.findOne({ _id: market_id, status: true });
+        if (!market) {
+            return res.status(404).json({ success: false, message: "Market not found or inactive" });
+        };
+        const { start, end, startYear, endYear } = getFinancialYear();
+        const results = await MarketResult.find({
+            market_id: market._id,
+            result_time: { $gte: start, $lte: end }
+        });
+        const resultMap: Record<string, string> = {};
+        results.forEach(r => {
+            const dayStr = toISTDateString(r.result_time);
+            resultMap[dayStr] = r.result;
+        });
+        const months = [
+            { name: "APR", month: 3 },
+            { name: "MAY", month: 4 },
+            { name: "JUN", month: 5 },
+            { name: "JUL", month: 6 },
+            { name: "AUG", month: 7 },
+            { name: "SEP", month: 8 },
+            { name: "OCT", month: 9 },
+            { name: "NOV", month: 10 },
+            { name: "DEC", month: 11 },
+            { name: "JAN", month: 0 },
+            { name: "FEB", month: 1 },
+            { name: "MAR", month: 2 },
+        ];
+        const calendar: any[] = [];
+        for (let day = 1; day <= 31; day++) {
+            const row: Record<string, string | number> = { day };
+            months.forEach((m, idx) => {
+                let year = idx <= 8 ? startYear : endYear;
+                const dateStr = new Date(year, m.month, day).toISOString().slice(0, 10);
+                row[m.name] = resultMap[dateStr] || "";
+            });
+            calendar.push(row);
+        }
+        return res.json({
+            success: true,
+            market: market.market_name,
+            year: `${startYear}-${endYear}`,
+            months: months.map(m => m.name),
+            calendar
+        });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({
+            success: false,
+            message: (err as Error).message
+        });
     }
-    const market = await Market.findOne({ _id: market_id, status: true });
-    if (!market) {
-      return res.status(404).json({ success: false, message: "Market not found or inactive" });
-    };
-    const { start, end, startYear, endYear } = getFinancialYear();
-    const results = await MarketResult.find({
-      market_id: market._id,
-      result_time: { $gte: start, $lte: end }
-    });
-    const resultMap: Record<string, string> = {};
-    results.forEach(r => {
-      const dayStr = r.result_time.toISOString().slice(0, 10);
-      resultMap[dayStr] = r.result;
-    });
-    const months = [
-      { name: "APR", month: 3 },
-      { name: "MAY", month: 4 },
-      { name: "JUN", month: 5 },
-      { name: "JUL", month: 6 },
-      { name: "AUG", month: 7 },
-      { name: "SEP", month: 8 },
-      { name: "OCT", month: 9 },
-      { name: "NOV", month: 10 },
-      { name: "DEC", month: 11 },
-      { name: "JAN", month: 0 },
-      { name: "FEB", month: 1 },
-      { name: "MAR", month: 2 },
-    ];
-
-    // Build calendar: 31 days × 12 months
-    const calendar: any[] = [];
-    for (let day = 1; day <= 31; day++) {
-      const row: Record<string, string | number> = { day };
-      months.forEach((m, idx) => {
-        let year = idx <= 8 ? startYear : endYear; // APR→DEC: startYear, JAN→MAR: endYear
-        const dateStr = new Date(year, m.month, day).toISOString().slice(0, 10);
-        row[m.name] = resultMap[dateStr] || "";
-      });
-      calendar.push(row);
-    }
-
-    return res.json({
-      success: true,
-      market: market.market_name,
-      year: `${startYear}-${endYear}`,
-      months: months.map(m => m.name),
-      calendar
-    });
-
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      success: false,
-      message: (err as Error).message
-    });
-  }
 };

@@ -1,34 +1,43 @@
-interface MorningResultProps {
-  title?: string;
-  time?: string;
-  resultLeft?: string;
-  resultRight?: string;
+interface ResultBannerProps {
+  name: string;
+  prev?: string | null;
+  current?: string | null;
+  isUpcoming?: boolean;
 }
 
-const MorningResult: React.FC<MorningResultProps> = ({
-  title = "disawer",
-  time = "05:15 AM",
-  resultLeft = "--",
-  resultRight = "68",
+const ResultBanner: React.FC<ResultBannerProps> = ({
+  name,
+  prev = "--",
+  current = "--",
+  isUpcoming = false,
 }) => {
-  return (
-    <section className="bg-white py-4">
-      <div className="text-center">
-        <h3 className="text-xl font-bold uppercase">{title}</h3>
-        <p className="py-2 text-sm text-gray-800">{time}</p>
+  const sectionBg = isUpcoming
+    ? "bg-gray-900 text-white"
+    : "bg-white text-gray-900";
 
-        <div className="flex items-center justify-center gap-4">
-          <strong className="text-2xl">{resultLeft}</strong>
-          <img
-            src="/images/next.webp"
-            alt="next"
-            className="w-10 h-10"
-          />
-          <strong className="text-2xl">{resultRight}</strong>
+  const boxClass = isUpcoming?"text-white":"text-black";
+
+  return (
+    <section className={`py-3 rounded-lg shadow-md ${sectionBg}`}>
+      <div className="text-center">
+        <h3 className="text-lg font-bold uppercase tracking-wide">
+          {name}
+        </h3>
+
+        <div className="flex items-center justify-center gap-2 mt-2">
+          <span className={`px-3 py-1 text-lg font-semibold rounded ${boxClass}`}>
+            {prev || "-"}
+          </span>
+
+          <span className="text-lg font-bold">→</span>
+
+          <span className={`px-3 py-1 text-lg font-semibold rounded ${boxClass}`}>
+            {current || "-"}
+          </span>
         </div>
       </div>
     </section>
   );
 };
 
-export default MorningResult;
+export default ResultBanner;
