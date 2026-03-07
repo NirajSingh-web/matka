@@ -42,7 +42,7 @@ export const MarketTable: React.FC = () => {
           <tbody>
             {markets?.map((market) => (
               <tr
-                key={market.id}
+                key={market._id}
                 className="border-t border-slate-800 hover:bg-slate-800/50 transition"
               >
                 <td className="p-4 font-medium text-slate-300">
@@ -64,8 +64,8 @@ export const MarketTable: React.FC = () => {
                 <td className="p-4 text-center">
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-medium ${market.status
-                        ? "bg-green-500/20 text-green-400"
-                        : "bg-red-500/20 text-red-400"
+                      ? "bg-green-500/20 text-green-400"
+                      : "bg-red-500/20 text-red-400"
                       }`}
                   >
                     {market.status ? "Active" : "Inactive"}
@@ -80,7 +80,9 @@ export const MarketTable: React.FC = () => {
                     }}
                     className="text-indigo-400 hover:text-pink-400 font-medium transition"
                   >
-                    Edit
+                    <span className="material-symbols-outlined">
+                      update
+                    </span>
                   </button>
                 </td>
               </tr>

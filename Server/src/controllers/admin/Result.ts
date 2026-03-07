@@ -6,6 +6,11 @@ const convertISTtoUTC = (istDateString: string): Date => {
     const istDate = new Date(istDateString.replace(" ", "T") + "+05:30");
     return new Date(istDate.toISOString());
 };
+export function utcToISTString(utcDate: Date): string {
+    return new Date(utcDate).toLocaleString("en-IN", {
+        timeZone: "Asia/Kolkata"
+    });
+}
 export const createMarketResult = async (req: AuthRequest, res: Response) => {
     try {
         const { error, value } = createMarketResultSchema.validate(req.body);
@@ -15,7 +20,7 @@ export const createMarketResult = async (req: AuthRequest, res: Response) => {
                 message: error.details[0].message
             });
         };
-        const{_id}=req.user||{}
+        const { _id } = req.user || {}
         const { market_id, symbol, result, status, result_time } = value;
         const utcResultTime = convertISTtoUTC(result_time);
         const newResult = await MarketResult.create({
@@ -24,7 +29,7 @@ export const createMarketResult = async (req: AuthRequest, res: Response) => {
             result,
             status,
             result_time: utcResultTime,
-            createdBy:_id
+            createdBy: _id
         });
         return res.status(201).json({
             success: true,
@@ -51,7 +56,7 @@ export const getAllMarketResults = async (_req: Request, res: Response) => {
         return res.status(200).json({
             success: true,
             count: results.length,
-            data: results
+            data: results.map(e => ({ ...e.toObject(), result_time: e.result_time && utcToISTString(e.result_time) }))
         });
     } catch (error: any) {
         return res.status(500).json({

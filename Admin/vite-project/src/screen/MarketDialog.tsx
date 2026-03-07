@@ -3,8 +3,8 @@ import { Controller, useForm } from "react-hook-form";
 // import { Market, MarketPayload } from "../types/market";
 // import { useCreateMarket, useUpdateMarket } from "../hooks/useMarket";
 import { useCreateMarket, useUpdateMarket, type Market, type MarketPayload } from "../hook/useMarket";
-import { toast } from "react-toastify";
-import type { AxiosError } from "axios";
+import { toast } from "react-toastify";;
+import { useEffect } from "react";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -16,7 +16,9 @@ const MarketDialog: React.FC<Props> = ({ isOpen, onClose, editData, refetch }) =
   const { register, handleSubmit, reset, control } = useForm<MarketPayload>({
     defaultValues: editData || {},
   });
-
+  useEffect(()=>{
+   editData&&reset(editData)
+  },[editData])
   const createMutation = useCreateMarket();
   const updateMutation = useUpdateMarket();
   const query = {
@@ -26,14 +28,14 @@ const MarketDialog: React.FC<Props> = ({ isOpen, onClose, editData, refetch }) =
       refetch?.();
       toast.success("market created SuccessFully")
     },
-    onError: (e: AxiosError) => {
-      const error = e.response?.data as any;
+    onError: (e: any) => {
+      const error = e?.response?.data as any;
       toast.error(error.message || error.error)
     }
   }
   const onSubmit = (data: MarketPayload) => {
     if (editData) {
-      updateMutation.mutate({ id: editData.id, payload: data }, query);
+      updateMutation.mutate({ id: editData._id, payload: data }, query);
     } else {
       createMutation.mutate(data, query);
     }

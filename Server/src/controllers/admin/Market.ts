@@ -36,33 +36,33 @@ export const createMarket = async (req: AuthRequest, res: Response) => {
     }
 };
 export const getAllMarkets = async (_req: AuthRequest, res: Response) => {
-  try {
-    const {_id}=_req.user||{}
-    const markets = await Market.find({createdBy:_id}) 
-      .populate("createdBy", "name email")
-      .sort({ createdAt: -1 });
-    const formattedMarkets = markets.map(market => ({
-      _id: market._id,
-      market_name: market.market_name,
-      open_time: market.open_time ? utcToIST_HHMM(market.open_time) : null,
-      close_time: market.close_time ? utcToIST_HHMM(market.close_time) : null,
-      result_time: market.result_time ? utcToIST_HHMM(market.result_time) : null,
-      status: market.status,
-      createdBy: market.createdBy,
-      createdAt: market.createdAt,
-      updatedAt: market.updatedAt,
-    }));
-    return res.status(200).json({
-      success: true,
-      count: formattedMarkets.length,
-      data: formattedMarkets,
-    });
-  } catch (error: any) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
+    try {
+        const { _id } = _req.user || {}
+        const markets = await Market.find({ createdBy: _id })
+            .populate("createdBy", "name email")
+            .sort({ createdAt: -1 });
+        const formattedMarkets = markets.map(market => ({
+            _id: market._id,
+            market_name: market.market_name,
+            open_time: market.open_time ? utcToIST_HHMM(market.open_time) : null,
+            close_time: market.close_time ? utcToIST_HHMM(market.close_time) : null,
+            result_time: market.result_time ? utcToIST_HHMM(market.result_time) : null,
+            status: market.status,
+            createdBy: market.createdBy,
+            createdAt: market.createdAt,
+            updatedAt: market.updatedAt,
+        }));
+        return res.status(200).json({
+            success: true,
+            count: formattedMarkets.length,
+            data: formattedMarkets,
+        });
+    } catch (error: any) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
 };
 export const updateMarket = async (req: Request, res: Response) => {
     try {
@@ -71,9 +71,9 @@ export const updateMarket = async (req: Request, res: Response) => {
             id,
             {
                 ...req.body,
-                open_time: req.body.open_time ? new Date(req.body.open_time) : undefined,
-                close_time: req.body.close_time ? new Date(req.body.close_time) : undefined,
-                result_time: req.body.result_time ? new Date(req.body.result_time) : undefined
+                open_time: req.body.open_time ? parseTimeToDate(req.body.open_time) : undefined,
+                close_time: req.body.close_time ? parseTimeToDate(req.body.close_time) : undefined,
+                result_time: req.body.result_time ? parseTimeToDate(req.body.result_time) : undefined
             },
             { new: true, runValidators: true }
         );

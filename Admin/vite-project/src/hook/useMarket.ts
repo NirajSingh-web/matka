@@ -6,7 +6,7 @@ import { apiServer } from "../constant/apiclient";
 // types/market.ts
 
 export interface Market {
-  id: string;
+  _id: string;
   market_name: string;
   open_time: string;
   close_time: string;

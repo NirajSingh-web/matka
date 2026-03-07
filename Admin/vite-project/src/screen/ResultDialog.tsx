@@ -3,9 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useForm, Controller } from "react-hook-form";
 import type { MarketResult } from "../types/market.type";
 import { useMarkets } from "../hook/useMarket";
-import { useCreateMarketResult,useUpdateMarketResult } from "../hook/useResult";
+import { useCreateMarketResult, useUpdateMarketResult } from "../hook/useResult";
 import type { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import { formatDateTimeLocal } from "../utils/dateTime";
 
 interface Props {
   isOpen: boolean;
@@ -18,7 +19,7 @@ export interface FormValues {
   market_id: string;
   result: string;
   status: boolean;
-  result_time: string; 
+  result_time: string;
 }
 
 const ResultDialog: React.FC<Props> = ({
@@ -50,11 +51,11 @@ const ResultDialog: React.FC<Props> = ({
     if (isOpen) {
       if (editData) {
         reset({
-          market_id: editData.market_id,
+          market_id: (editData.market_id as any)._id,
           result: editData.result,
           status: editData.status,
           result_time: editData.result_time
-            ? new Date(editData.result_time).toISOString().slice(0, 16)
+            ? formatDateTimeLocal(editData.result_time)
             : "",
         } as any);
       } else {
@@ -73,8 +74,8 @@ const ResultDialog: React.FC<Props> = ({
       reset();
       refetch?.();
     },
-    onError: (e: AxiosError) => {
-      const error = e.response?.data as any;
+    onError: (e:any) => {
+      const error = e?.response?.data as any;
       toast.error(error?.message || "Something went wrong");
     },
   };
@@ -84,9 +85,9 @@ const ResultDialog: React.FC<Props> = ({
     };
     if (editData?._id) {
       updateResult({
-        id:editData._id,
+        id: editData._id,
         payload
-      },query)
+      }, query)
 
     } else {
       createResult(formData, query);
@@ -172,7 +173,6 @@ const ResultDialog: React.FC<Props> = ({
                 <label className="block text-sm text-slate-400 mb-1">
                   Result Time
                 </label>
-
                 <input
                   type="datetime-local"
                   {...register("result_time", {
@@ -199,14 +199,12 @@ const ResultDialog: React.FC<Props> = ({
                     <button
                       type="button"
                       onClick={() => field.onChange(!field.value)}
-                      className={`relative w-14 h-7 rounded-full transition ${
-                        field.value ? "bg-green-500" : "bg-red-500"
-                      }`}
+                      className={`relative w-14 h-7 rounded-full transition ${field.value ? "bg-green-500" : "bg-red-500"
+                        }`}
                     >
                       <span
-                        className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition ${
-                          field.value ? "translate-x-7" : ""
-                        }`}
+                        className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition ${field.value ? "translate-x-7" : ""
+                          }`}
                       />
                     </button>
                   )}

@@ -14,4 +14,5 @@ export interface MarketResult {
   result: number;
   status: boolean;
   createdAt: string;
+  result_time:string;
 }
