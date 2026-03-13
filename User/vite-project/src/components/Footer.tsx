@@ -2,12 +2,14 @@ import { Link } from "react-router-dom";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="p-4 text-white bg-[#406e83] shadow md:px-6 md:py-8">
+    <footer className="p-4 text-yellow-400 bg-black shadow md:px-6 md:py-8">
       <div className="sm:flex sm:items-center sm:justify-between">
 
         {/* Logo */}
         <Link to="/" className="flex items-center mb-4 sm:mb-0">
-          <span className="text-xl font-bold">Satta King 7™</span>
+          <span className="text-xl font-bold text-yellow-400">
+            Satta King 7™
+          </span>
         </Link>
 
         {/* Links */}
@@ -16,7 +18,7 @@ const Footer: React.FC = () => {
           <li>
             <Link
               to="/chart"
-              className="mr-4 text-lg text-white hover:underline md:mr-6"
+              className="mr-4 text-lg text-yellow-400 hover:text-yellow-300 hover:underline md:mr-6"
             >
               Chart
             </Link>
@@ -25,16 +27,16 @@ const Footer: React.FC = () => {
           <li>
             <Link
               to="/privacy-policy"
-              className="mr-4 text-lg text-white hover:underline md:mr-6"
+              className="mr-4 text-lg text-yellow-400 hover:text-yellow-300 hover:underline md:mr-6"
             >
-              Privacy&Policy
+              Privacy & Policy
             </Link>
           </li>
 
           <li>
             <Link
               to="/terms-and-conditions"
-              className="mr-4 text-lg text-white hover:underline md:mr-6"
+              className="mr-4 text-lg text-yellow-400 hover:text-yellow-300 hover:underline md:mr-6"
             >
               Terms & Conditions
             </Link>
@@ -43,7 +45,7 @@ const Footer: React.FC = () => {
           <li>
             <Link
               to="/disclaimer"
-              className="mr-4 text-lg text-white hover:underline md:mr-6"
+              className="mr-4 text-lg text-yellow-400 hover:text-yellow-300 hover:underline md:mr-6"
             >
               Disclaimer
             </Link>
@@ -54,7 +56,7 @@ const Footer: React.FC = () => {
               href="https://wa.me/917206591251"
               target="_blank"
               rel="noopener noreferrer"
-              className="mr-4 text-lg text-white hover:underline md:mr-6"
+              className="mr-4 text-lg text-yellow-400 hover:text-yellow-300 hover:underline md:mr-6"
             >
               Connect
             </a>
@@ -63,20 +65,20 @@ const Footer: React.FC = () => {
         </ul>
       </div>
 
-      <hr className="border-gray-200 sm:mx-auto lg:my-8" />
+      <hr className="border-yellow-600 sm:mx-auto lg:my-8" />
 
       {/* Disclaimer */}
-      <p className="text-sm text-center text-red-400">
+      <p className="text-sm text-center text-yellow-400">
         This website does not promote any kind of satta activities. This
         website is made for entertainment purpose only.
       </p>
 
-      <hr className="border-gray-200 sm:mx-auto lg:my-4" />
+      <hr className="border-yellow-600 sm:mx-auto lg:my-4" />
 
       {/* Copyright */}
-      <span className="block text-sm text-white sm:text-center">
+      <span className="block text-sm text-yellow-400 sm:text-center">
         ©{" "}
-        <Link to="/" className="hover:underline">
+        <Link to="/" className="hover:underline hover:text-yellow-300">
           Satta King 7™
         </Link>{" "}
         . All Rights Reserved.

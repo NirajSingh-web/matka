@@ -12,9 +12,19 @@ const LiveTime = () => {
   }, []);
 
   return (
-    <div className="py-2 text-lg font-bold text-center text-black bg-white">
-      {time}
-    </div>
+    <section className="bg-black py-4">
+      <div className="max-w-screen-xl mx-auto text-center">
+        
+        <div className="text-xl font-bold text-white mb-2">
+          {time}
+        </div>
+
+        <p className="text-white font-semibold">
+          हा भाई यही आती हे सबसे पहले खबर रूको और देखो
+        </p>
+
+      </div>
+    </section>
   );
 };
 

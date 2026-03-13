@@ -86,13 +86,13 @@ export interface MarketCalendarResponse {
   months: string[];
   calendar: MarketCalendarRow[];
 }
-export const useGetMarketCalendar = (marketId?: string) => {
+export const useGetMarketCalendar = (marketId?: string,year?: string) => {
   return useQuery<MarketCalendarResponse>({
-    queryKey: ["market-calendar", marketId],
-    enabled: !!marketId,
+    queryKey: ["market-calendar", marketId, year],
+    enabled: !!marketId && !!year,
     queryFn: async () => {
       const { data } = await capMarketServer.get(
-        `/get-calender?market_id=${marketId}`
+        `/get-calender?market_id=${marketId}&year=${year}`
       );
       return data;
     },

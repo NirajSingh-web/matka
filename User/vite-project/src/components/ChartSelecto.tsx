@@ -1,75 +1,65 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useGetAllMarkets } from "../hook/useData";
 
 const ChartSelector = () => {
-  const [game, setGame] = useState("daman");
+
+  const { data } = useGetAllMarkets();
+  const markets = data?.data || [];
+
+  const [game, setGame] = useState("");
   const [year, setYear] = useState("2026");
 
   const navigate = useNavigate();
 
   const handleCheck = () => {
-    navigate("/result-table");
+    if (!game) return;
+
+    navigate(`/result-table/${game}/${year}`);
   };
 
   return (
-    <div className="py-8 mx-auto mt-4 bg-gray-600">
-      <h2 className="pb-4 text-2xl font-bold text-center text-white">
+    <div className="w-full py-8 mx-auto mt-4 bg-yellow-400">
+
+      <h2 className="pb-4 text-2xl font-bold text-center text-black">
         Check All Game Year Chart
       </h2>
 
-      <div className="flex items-center justify-center mx-auto rounded">
-        <div className="flex mx-2">
+      <div className="flex items-center justify-center gap-3">
 
-          <select
-            value={game}
-            onChange={(e) => setGame(e.target.value)}
-            className="py-2 text-sm uppercase bg-white rounded-md outline-none md:py-3 md:text-base lg:px-3"
-          >
-            <option value="daman">daman</option>
-            <option value="karol-bagh">karol bagh</option>
-            <option value="raj-shree">raj shree</option>
-            <option value="gali">gali</option>
-            <option value="dwarka">dwarka</option>
-            <option value="gaziabad">gaziabad</option>
-            <option value="alwar">alwar</option>
-            <option value="faridabad">faridabad</option>
-            <option value="agra">agra</option>
-            <option value="shri-ganesh">shri ganesh</option>
-            <option value="delhi-bazar">delhi bazar</option>
-            <option value="gwalior">gwalior</option>
-            <option value="sadar-bazar">sadar bazar</option>
-            <option value="disawer">disawer</option>
-            <option value="hr-satta">hr satta</option>
-            <option value="ujjala-super">ujjala super</option>
-            <option value="new-ganga">new ganga</option>
-            <option value="delhi-matka">delhi matka</option>
-            <option value="dehradun-city">dehradun city</option>
-            <option value="kkr-city">kkr city</option>
-            <option value="delhi-darbar">delhi darbar</option>
-            <option value="mandi-bazar">mandi bazar</option>
-            <option value="madhupuri">madhupuri</option>
-            <option value="fatehabad">fatehabad</option>
-          </select>
+        <select
+          value={game}
+          onChange={(e) => setGame(e.target.value)}
+          className="px-3 py-2 text-sm uppercase bg-white rounded-md outline-none"
+        >
+          <option value="">Select Game</option>
 
-          <select
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            className="px-2 py-2 mx-0 ml-1 text-sm bg-white rounded-md outline-none md:py-3 md:text-base lg:mx-3"
-          >
-            <option value="2026">2026</option>
-            <option value="2025">2025</option>
-            <option value="2024">2024</option>
-            <option value="2023">2023</option>
-          </select>
+          {markets.map((m) => (
+            <option key={m._id} value={m._id}>
+              {m.market_name}
+            </option>
+          ))}
 
-        </div>
+        </select>
+
+        <select
+          value={year}
+          onChange={(e) => setYear(e.target.value)}
+          className="px-3 py-2 text-sm bg-white rounded-md outline-none"
+        >
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+        </select>
 
         <button
           onClick={handleCheck}
-          className="px-4 py-2 font-semibold text-white bg-blue-500 rounded-md hover:bg-blue-600 transition"
+          className="px-4 py-2 font-semibold text-white bg-black rounded-md hover:bg-gray-800"
         >
           Check Chart
         </button>
+
       </div>
     </div>
   );

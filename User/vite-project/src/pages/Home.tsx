@@ -8,6 +8,7 @@ import InfoSection from "../components/InfoSection";
 import BlogSection from "../components/BlogSection";
 import { useGetAllMarkets, useGetLiveResult } from "../hook/useData";
 import ResultBanner from "../components/MorningResult";
+import ChartSelector from "../components/ChartSelecto";
 const Home = () => {
   const { data: marketResponse } = useGetAllMarkets();
   const { data } = useGetLiveResult();
@@ -21,6 +22,7 @@ const Home = () => {
       <FastestHeading />
       <PremiumCard markets={marketResponse?.data || []}/>
       <GameList markets={marketResponse?.data || []} />
+      <ChartSelector/>
       <ChartTable />
       <InfoSection />
       <BlogSection />

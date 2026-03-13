@@ -5,58 +5,61 @@ import asset from "../assets/sk7-logo.png";
 const Navbar = () => {
   return (
     <>
-      {/* Top Logo Section */}
-      <nav className="w-full bg-gradient-to-br from-blue-400 to-pink-700">
-        <div className="flex items-center justify-center h-[170px]">
-          <a href="/" title="Satta King 7 Home">
+      {/* Logo */}
+      <nav className="w-full bg-black">
+        <div className="flex items-center justify-center py-6">
+          <Link to="/">
             <img
               src={asset}
-              alt="Satta King 7 Logo"
-              className="h-[150px] w-[150px] object-contain"
+              alt="logo"
+              className="h-[140px] w-[140px] object-contain"
             />
-          </a>
+          </Link>
         </div>
       </nav>
 
-      {/* Bottom Menu Section */}
-      <nav className="bg-white">
-        <div className="px-4 py-3 mx-auto md:px-6">
-          <div className="flex items-center justify-center">
-            <ul className="flex flex-row space-x-8 text-sm font-medium">
-              
-              <li>
-                <Link
-                  to="/chart"
-                  className="text-gray-900 hover:underline hover:text-blue-600 transition"
-                >
-                  Chart
-                </Link>
-              </li>
+      {/* Menu */}
+<section className="bg-yellow-400 py-7">
+  <div className="max-w-7xl mx-auto px-7">
+    <ul className="grid grid-cols-3 gap-15">
 
-              <li>
-                <a
-                  href="https://wa.me/917206591251"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-900 hover:underline hover:text-green-600 transition"
-                >
-                  Play Now
-                </a>
-              </li>
+      {/* Home */}
+      <li>
+        <Link
+          to="/"
+          className="flex items-center justify-center h-[55px] w-full rounded-full bg-yellow-300 text-black font-semibold hover:bg-white transition"
+        >
+          Home
+        </Link>
+      </li>
 
-              <li>
-                <Link
-                  to="/"
-                  className="text-gray-900 hover:underline hover:text-pink-600 transition"
-                >
-                  DELHI SATTA CHART
-                </Link>
-              </li>
+      {/* Chart */}
+      <li>
+        <Link
+          to="/chart"
+          className="flex items-center justify-center h-[55px] w-full rounded-full bg-yellow-300 text-black font-semibold hover:bg-white transition"
+        >
+          Chart
+        </Link>
+      </li>
 
-            </ul>
-          </div>
-        </div>
-      </nav>
+      
+
+      {/* Play Now */}
+      <li>
+        <a
+          href="https://wa.me/917206591251"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center h-[55px] w-full rounded-full bg-yellow-300 text-black font-semibold hover:bg-white transition"
+        >
+          Contact
+        </a>
+      </li>
+
+    </ul>
+  </div>
+</section>
     </>
   );
 };

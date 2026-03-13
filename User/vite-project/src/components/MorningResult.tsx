@@ -11,11 +11,9 @@ const ResultBanner: React.FC<ResultBannerProps> = ({
   current = "--",
   isUpcoming = false,
 }) => {
-  const sectionBg = isUpcoming
-    ? "bg-gray-900 text-white"
-    : "bg-white text-gray-900";
 
-  const boxClass = isUpcoming?"text-white":"text-black";
+  const sectionBg = "bg-black text-white";
+  const boxClass = "text-white";
 
   return (
     <section className={`py-3 rounded-lg shadow-md ${sectionBg}`}>

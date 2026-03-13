@@ -6,6 +6,8 @@ interface Props {
 }
 
 const YearCard = ({ item }: Props) => {
+  const currentYear = new Date().getFullYear();
+
   return (
     <div
       className={`
@@ -30,15 +32,21 @@ const YearCard = ({ item }: Props) => {
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center">
-        <Link to={`/result-table/${item._id}`} className="group relative">
+
+        <Link
+          to={`/result-table/${item._id}/${currentYear}`}
+          className="group relative"
+        >
           <h4 className="text-xl md:text-3xl font-bold tracking-wide text-center uppercase transition-all duration-300 group-hover:scale-105">
+            
             <span className="relative bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
               {item.name}
             </span>
 
             <span className="block text-lg md:text-xl mt-2 font-semibold text-white/90">
-              Yearly Chart 2026
+              Yearly Chart {currentYear}
             </span>
+
           </h4>
 
           <div className="w-0 h-0.5 bg-gradient-to-r from-white via-white/50 to-white mx-auto mt-3 group-hover:w-full transition-all duration-500" />
@@ -47,7 +55,9 @@ const YearCard = ({ item }: Props) => {
             <span className="text-sm font-medium">View Chart</span>
             <span className="animate-pulse">→</span>
           </div>
+
         </Link>
+
       </div>
     </div>
   );

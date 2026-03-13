@@ -1,40 +1,27 @@
 import type { MarketItem } from "../hook/useData";
 
-//import { FaWhatsapp } from "react-icons/fa";
 interface GameListData {
-  markets: MarketItem[]
+  markets: MarketItem[];
 }
+
 const PremiumCard: React.FC<GameListData> = ({ markets }) => {
   return (
-    <section className="grid grid-cols-1 gap-6 lg:grid-cols-2 p-4 md:p-6">
+    <section className="w-full bg-yellow-400 p-4 md:p-6">
       <div
         className="
         relative overflow-hidden
+        w-full
         text-center
         px-4 py-8 md:px-8 md:py-10
         rounded-2xl md:rounded-3xl
-        bg-gradient-to-r from-rose-500 to-pink-600
-        text-white
-        border border-white/30
-        shadow-xl shadow-rose-400/40
+        bg-yellow-400
+        text-black
+        border-2 border-black
+        shadow-xl
         transition-all duration-300
-        hover:scale-[1.02] hover:rotate-1
         flex flex-col justify-center items-center
-        group
       "
       >
-        {/* Glow Effects */}
-        <div className="absolute inset-0 overflow-hidden rounded-2xl md:rounded-3xl">
-          <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-xl group-hover:scale-125 transition-transform duration-500" />
-          <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-xl group-hover:scale-125 transition-transform duration-500" />
-          <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />
-        </div>
-
-        {/* Shine Animation */}
-        <div className="absolute inset-0 rounded-2xl md:rounded-3xl p-[2px]">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-        </div>
-
         {/* Content */}
         <div className="relative z-10 w-full space-y-2 text-sm md:text-base font-bold">
           <p className="text-lg md:text-xl">
@@ -44,12 +31,15 @@ const PremiumCard: React.FC<GameListData> = ({ markets }) => {
           <p className="text-xl md:text-2xl tracking-wide">
             ♕♕ DEV BHAI KHAIWAL ♕♕
           </p>
-          {
-            markets.map(e => (
-              <p>⏰ {e.market_name} ----------- {e.result_time}</p>
-            ))
-          }
+
+          {markets.map((e) => (
+            <p key={e.market_name}>
+              ⏰ {e.market_name} ----------- {e.result_time}
+            </p>
+          ))}
+
           <p className="mt-4 text-lg">🙂🙂 DEV BHAI KHAIWAL 🙂🙂</p>
+
           <a
             href="https://wa.me/918571979107"
             target="_blank"
@@ -57,21 +47,16 @@ const PremiumCard: React.FC<GameListData> = ({ markets }) => {
             className="
               inline-flex items-center gap-2
               mt-4 px-6 py-2
-              bg-white text-rose-600
+              bg-black text-white
               rounded-xl font-bold
               shadow-md
-              hover:bg-rose-100
+              hover:bg-gray-800
               transition
             "
           >
-            {/* <FaWhatsapp />
-            Play Now */}
+            Play Now
           </a>
         </div>
-
-        {/* Corner Borders */}
-        <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-white/30 rounded-tr-xl" />
-        <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-white/30 rounded-bl-xl" />
       </div>
     </section>
   );
